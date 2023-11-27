@@ -13,8 +13,8 @@
         }
     ],
     "require": {
-        "php": ">=5.3.3",
-        "symfony/twig-bridge": "3.*"
+        "php": ">=7.2.5",
+        "symfony/twig-bridge": "^5.4"
     },
     "autoload": {
         "psr-4" : {
