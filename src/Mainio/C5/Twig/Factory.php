@@ -3,9 +3,9 @@ namespace Mainio\C5\Twig;
 
 use Concrete\Core\Package\PackageList;
 use Config;
-use Twig_Environment;
-use Twig_Extension_Debug;
-use Twig_Loader_Filesystem;
+use Twig\Environment;
+use Twig\Extension\DebugExtension;
+use Twig\Loader\FilesystemLoader;
 
 class Factory
 {
@@ -55,38 +55,28 @@ class Factory
      * b) We'll need to have a single twig environment per twig cache
      *    directory.
      */
-    public static function createEnvironment($paths, \Symfony\Component\Translation\Translator $translator, $options = array())
+    public static function createEnvironment($paths, \Symfony\Component\Translation\Translator $translator, $options = [])
     {
         $viewPath = $paths['base'] . '/' . DIRNAME_VIEWS;
-        $twigBridgePath = $paths['lib'] . '/symfony/twig-bridge/Symfony/Bridge/Twig';
+        $twigBridgePath = $paths['lib'] . '/symfony/twig-bridge';
 
-        $opts = array();
+        $opts = [];
         if (Config::get('app.twig_debug')) {
             $opts['debug'] = true;
         } elseif ($paths['cache']) {
             $opts['cache'] = $paths['cache'];
         }
         $opts = array_merge_recursive($opts, $options);
-        $twig = new Twig_Environment(new Twig_Loader_Filesystem(
-            array(
-                $twigBridgePath . '/Resources/views/Form',
-            )
-        ), $opts);
+        $twig = new Environment(new FilesystemLoader([$twigBridgePath . '/Resources/views/Form']), $opts);
 
         if (is_object($translator)) {
-            $twig->addExtension(
-                new \Symfony\Bridge\Twig\Extension\TranslationExtension(
-                    $translator
-                )
-            );
+            $twig->addExtension(new \Symfony\Bridge\Twig\Extension\TranslationExtension($translator));
         }
 
-        $twig->addExtension(
-            new Concrete5Extension()
-        );
+        $twig->addExtension(new Concrete5Extension());
 
         if (Config::get('app.package_dev_mode')) {
-            $twig->addExtension(new Twig_Extension_Debug());
+            $twig->addExtension(new DebugExtension());
         }
 
         return $twig;

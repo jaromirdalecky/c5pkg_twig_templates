@@ -10,7 +10,7 @@ class Page extends CorePage
 {
 
     /**
-     * @return PageController
+     * @return \PageController
      */
     public function getPageController()
     {
@@ -46,9 +46,9 @@ class Page extends CorePage
             }
 
             if (isset($class) && class_exists($class)) {
-                $this->controller = Core::make($class, array($this));
+                $this->controller = Core::make($class, array('c' => $this));
             } else {
-                $this->controller = Core::make('\PageController', array($this));
+                $this->controller = Core::make('\PageController', array('c' => $this));
             }
         }
 
